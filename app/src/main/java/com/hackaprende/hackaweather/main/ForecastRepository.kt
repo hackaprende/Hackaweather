@@ -10,7 +10,7 @@ private const val SECONDS_IN_ONE_DAY = 60 * 60 * 24
 
 class ForecastRepository {
 
-    val dayForecasts: Flow<DayForecast> = flow {
+    fun getDayForecasts(latitude: Double, longitude: Double): Flow<DayForecast> = flow {
         var count = 1
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.HOUR_OF_DAY, 0)
@@ -20,7 +20,7 @@ class ForecastRepository {
         while(count < 6) {
             val timestampToDownload = currentTimestamp - (count * SECONDS_IN_ONE_DAY)
             val dayForecast = ForecastApi.retrofitService.getDayForecast(
-                60.99, 30.9,
+                latitude, longitude,
                 timestampToDownload, "5dd487edb1886dda6965a9c828736c8b"
             )
             dayForecast.setCurrentDayByTimestamp(timestampToDownload)

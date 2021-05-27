@@ -15,13 +15,9 @@ class MainViewModel: ViewModel() {
 
     private val repository = ForecastRepository()
 
-    init {
-        getForecasts()
-    }
-
-    private fun getForecasts() {
+    fun getForecasts(latitude: Double, longitude: Double) {
         viewModelScope.launch {
-            repository.dayForecasts.collect {
+            repository.getDayForecasts(latitude, longitude).collect {
                 dayForecast ->
                 _forecasts.value = _forecasts.value.toMutableList().also {
                     it.add(dayForecast)

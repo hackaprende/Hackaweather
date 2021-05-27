@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="hourForecast"
+            type="com.hackaprende.hackaweather.common.HourlyForecast" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:text="@{hourForecast.formattedHour}"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            tools:text="10:00" />
+
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="center_horizontal"
+            android:glideImage="@{hourForecast.weather.icon}"
+            android:gravity="center_horizontal" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:text="@{hourForecast.weather.main}"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            tools:text="Clouds" />
+
+        <TextView
+            android:id="@+id/forecast_temp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:tempText="@{hourForecast.temp}"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            tools:text="150.0° F" />
+
+    </LinearLayout>
+</layout>

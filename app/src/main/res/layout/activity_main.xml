@@ -20,7 +20,12 @@
             android:gravity="center"
             android:textColor="@color/black"
             android:textSize="32sp"
-            tools:text="Weather in Mexico City"/>
+            tools:text="Mexico City"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/teal_700"/>
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -48,6 +53,11 @@
                 android:visibility="gone"
                 tools:visibility="visible" />
 
+            <ProgressBar
+                android:id="@+id/loading_wheel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
         </FrameLayout>
     </LinearLayout>
 </layout>

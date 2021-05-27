@@ -8,7 +8,6 @@ import android.location.Location
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
@@ -18,6 +17,8 @@ import com.google.android.gms.location.LocationServices
 import com.hackaprende.hackaweather.databinding.ActivityMainBinding
 import kotlinx.coroutines.flow.collect
 import android.location.Geocoder
+import com.hackaprende.hackaweather.R
+import com.hackaprende.hackaweather.api.ApiResponseStatus
 import java.util.*
 
 
@@ -41,6 +42,26 @@ class MainActivity : AppCompatActivity() {
             mainViewModel.forecasts.collect {
                 binding.emptyView.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
                 dayForecastAdapter.submitList(it)
+            }
+        }
+
+        mainViewModel.responseStatus.observe(this) {
+            when (it) {
+                is ApiResponseStatus.OnError -> {
+                    binding.loadingWheel.visibility = View.GONE
+                    binding.emptyView.text = getString(it.message)
+                    binding.emptyView.visibility = View.VISIBLE
+                }
+                ApiResponseStatus.OnLoading -> {
+                    binding.loadingWheel.visibility = View.VISIBLE
+                    binding.emptyView.text = getString(R.string.no_items_found)
+                    binding.emptyView.visibility = View.GONE
+                }
+                ApiResponseStatus.OnSuccess -> {
+                    binding.loadingWheel.visibility = View.GONE
+                    binding.emptyView.text = getString(R.string.no_items_found)
+                    binding.emptyView.visibility = View.GONE
+                }
             }
         }
 

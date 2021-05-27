@@ -30,6 +30,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_gravity="center_horizontal"
+            android:weatherIconDescription="@{hourForecast.weather.icon}"
             android:glideImage="@{hourForecast.weather.icon}"
             android:gravity="center_horizontal" />
 

@@ -22,3 +22,19 @@ fun setGlideImage(imageView: ImageView, iconId: String) {
         .load(url.replace("http", "https"))
         .into(imageView)
 }
+
+@BindingAdapter("android:weatherIconDescription")
+fun setWeatherIconDescription(imageView: ImageView, forecastIcon: String) {
+    imageView.contentDescription = when(forecastIcon) {
+        "01n" -> "Clear sky"
+        "02n" -> "Few clouds"
+        "03n" -> "Scattered clouds"
+        "04n" -> "Broken clouds"
+        "09n" -> "Shower rain"
+        "10n" -> "Rain"
+        "11n" -> "Thunderstorm"
+        "13n" -> "Snow"
+        "50n" -> "Mist"
+        else -> "Weather unknown"
+    }
+}

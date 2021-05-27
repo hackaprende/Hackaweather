@@ -3,20 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-
-    </data>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <fragment
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:id="@+id/map"
+            tools:context=".MapsActivity"
+            android:name="com.google.android.gms.maps.SupportMapFragment" />
+
         <TextView
             android:id="@+id/city_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="42dp"
+            android:padding="24dp"
             android:gravity="center"
             android:textColor="@color/black"
             android:textSize="32sp"
@@ -50,13 +53,13 @@
                 android:text="@string/no_items_found"
                 android:textColor="@color/black"
                 android:textSize="20sp"
-                android:visibility="gone"
-                tools:visibility="visible" />
+                android:visibility="gone" />
 
             <ProgressBar
                 android:id="@+id/loading_wheel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:layout_gravity="center"/>
         </FrameLayout>
     </LinearLayout>

@@ -10,6 +10,8 @@ import com.hackaprende.hackaweather.R
 import com.hackaprende.hackaweather.api.ApiResponseStatus
 import com.hackaprende.hackaweather.common.DayForecast
 import com.hackaprende.hackaweather.location.LocationRepository
+import com.hackaprende.hackaweather.location.LocationTasks
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,8 +20,13 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
+import javax.inject.Inject
 
-class MainViewModel: ViewModel() {
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    private val forecastRepository: ForecastTasks,
+    private val locationRepository: LocationTasks
+): ViewModel() {
     private var _forecasts = MutableStateFlow<MutableList<DayForecast>>(mutableListOf())
     val forecasts: StateFlow<MutableList<DayForecast>> = _forecasts
 
@@ -30,14 +37,11 @@ class MainViewModel: ViewModel() {
     val responseStatus: LiveData<ApiResponseStatus>
         get() = _responseStatus
 
-    private val repository = ForecastRepository()
-    private val locationRepository = LocationRepository()
-
     fun getForecasts(latitude: Double, longitude: Double) {
         viewModelScope.launch {
             _responseStatus.value = ApiResponseStatus.OnLoading
             clearList()
-            repository.getDayForecasts(latitude, longitude)
+            forecastRepository.getDayForecasts(latitude, longitude)
                 .catch { exception ->
                     if (exception is UnknownHostException) {
                         viewModelScope.cancel("No internet connection", exception)

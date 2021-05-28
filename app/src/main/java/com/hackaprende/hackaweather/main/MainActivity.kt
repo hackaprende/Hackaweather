@@ -24,6 +24,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.hackaprende.hackaweather.R
 import com.hackaprende.hackaweather.api.ApiResponseStatus
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.util.*
 
@@ -31,6 +32,7 @@ import java.util.*
 private const val LOCATION_PERMISSION_REQUEST_CODE = 1000
 
 @ExperimentalCoroutinesApi
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private val mainViewModel: MainViewModel by viewModels()

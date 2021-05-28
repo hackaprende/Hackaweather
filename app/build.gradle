@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'com.google.secrets_gradle_plugin' version '0.5'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -55,6 +56,10 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-moshi:2.5.0"
     implementation 'com.google.android.gms:play-services-location:18.0.0'
     implementation 'com.google.android.gms:play-services-maps:17.0.1'
+
+    // Hilt for Dependency Injection
+    implementation "com.google.dagger:hilt-android:2.35"
+    kapt "com.google.dagger:hilt-compiler:2.35"
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

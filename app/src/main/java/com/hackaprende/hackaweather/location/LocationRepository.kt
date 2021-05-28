@@ -8,12 +8,13 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import javax.inject.Inject
 
-class LocationRepository {
+class LocationRepository @Inject constructor(): LocationTasks {
 
     @ExperimentalCoroutinesApi
     @SuppressLint("MissingPermission")
-    fun getUserLocation(fusedLocationProviderClient: FusedLocationProviderClient): Flow<Location?> = callbackFlow {
+    override fun getUserLocation(fusedLocationProviderClient: FusedLocationProviderClient): Flow<Location?> = callbackFlow {
         var onLocationSuccessListener: (OnSuccessListener<Location?>)? =
             OnSuccessListener<Location?> {
                 offer(it)

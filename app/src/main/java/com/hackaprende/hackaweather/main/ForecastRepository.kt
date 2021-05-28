@@ -5,12 +5,13 @@ import com.hackaprende.hackaweather.common.DayForecast
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.util.*
+import javax.inject.Inject
 
 private const val SECONDS_IN_ONE_DAY = 60 * 60 * 24
 
-class ForecastRepository {
+class ForecastRepository @Inject constructor(): ForecastTasks {
 
-    fun getDayForecasts(latitude: Double, longitude: Double): Flow<DayForecast> = flow {
+    override fun getDayForecasts(latitude: Double, longitude: Double): Flow<DayForecast> = flow {
         var count = 0
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.HOUR_OF_DAY, 0)

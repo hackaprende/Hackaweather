@@ -4,4 +4,5 @@
     <string name="temp_format">%.1f° C</string>
     <string name="icon_url_format">http://openweathermap.org/img/wn/%s@2x.png</string>
     <string name="no_internet_connection">No internet connection</string>
+    <string name="not_in_a_city">Not in a city</string>
 </resources>

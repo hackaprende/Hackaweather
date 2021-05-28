@@ -24,11 +24,13 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.hackaprende.hackaweather.R
 import com.hackaprende.hackaweather.api.ApiResponseStatus
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.util.*
 
 
 private const val LOCATION_PERMISSION_REQUEST_CODE = 1000
 
+@ExperimentalCoroutinesApi
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private val mainViewModel: MainViewModel by viewModels()
@@ -49,6 +51,23 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             mainViewModel.forecasts.collect {
                 binding.emptyView.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
                 dayForecastAdapter.submitList(it)
+            }
+        }
+
+        lifecycleScope.launchWhenStarted {
+            mainViewModel.location.collect {
+                if (it == null) {
+                    // This is a temporal mock latitude due to problems with the GPS emulator
+                    // it should not be in production
+                    currentLocation = Location("")
+                    currentLocation.latitude = 19.34
+                    currentLocation.longitude = -99.15
+                } else {
+                    currentLocation = it
+                }
+
+                getForecasts(currentLocation.latitude, currentLocation.longitude)
+                loadMap()
             }
         }
 
@@ -101,24 +120,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     @SuppressLint("MissingPermission")
-    private fun requestUserLocation() {
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location: Location? ->
-                if (location == null) {
-                    // This is a temporal mock latitude due to problems with the GPS emulator
-                    // it should not be in production
-                    currentLocation = Location("")
-                    currentLocation.latitude = 19.34
-                    currentLocation.longitude = -99.15
-                } else {
-                    currentLocation = location
-                }
-
-                getForecasts(currentLocation.latitude, currentLocation.longitude)
-
-                loadMap()
-            }
-    }
+    private fun requestUserLocation() = mainViewModel.getUserLocation(fusedLocationClient)
 
     private fun loadMap() {
         val mapFragment = supportFragmentManager
@@ -137,10 +139,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val addresses = geocoder.getFromLocation(latitude, longitude, 1)
 
         return (if (addresses.isNullOrEmpty()) {
-            "Not in a city"
+            getString(R.string.not_in_a_city)
         } else {
             addresses[0].locality
-        }) ?: "Not in a city"
+        }) ?: getString(R.string.not_in_a_city)
     }
 
     override fun onMapReady(googleMap: GoogleMap) {

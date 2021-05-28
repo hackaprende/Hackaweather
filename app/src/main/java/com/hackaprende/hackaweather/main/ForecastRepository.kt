@@ -1,12 +1,9 @@
 package com.hackaprende.hackaweather.main
 
-import androidx.lifecycle.viewModelScope
 import com.hackaprende.hackaweather.api.ForecastApi
 import com.hackaprende.hackaweather.common.DayForecast
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import java.net.UnknownHostException
 import java.util.*
 
 private const val SECONDS_IN_ONE_DAY = 60 * 60 * 24
@@ -14,7 +11,7 @@ private const val SECONDS_IN_ONE_DAY = 60 * 60 * 24
 class ForecastRepository {
 
     fun getDayForecasts(latitude: Double, longitude: Double): Flow<DayForecast> = flow {
-        var count = 1
+        var count = 0
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.HOUR_OF_DAY, 0)
         calendar.set(Calendar.MINUTE, 0)

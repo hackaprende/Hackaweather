@@ -1,12 +1,16 @@
 package com.hackaprende.hackaweather.main
 
+import android.location.Location
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.hackaprende.hackaweather.R
 import com.hackaprende.hackaweather.api.ApiResponseStatus
 import com.hackaprende.hackaweather.common.DayForecast
+import com.hackaprende.hackaweather.location.LocationRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,11 +23,15 @@ class MainViewModel: ViewModel() {
     private var _forecasts = MutableStateFlow<MutableList<DayForecast>>(mutableListOf())
     val forecasts: StateFlow<MutableList<DayForecast>> = _forecasts
 
+    private var _location = MutableStateFlow<Location?>(null)
+    val location: StateFlow<Location?> = _location
+
     private var _responseStatus = MutableLiveData<ApiResponseStatus>()
     val responseStatus: LiveData<ApiResponseStatus>
         get() = _responseStatus
 
     private val repository = ForecastRepository()
+    private val locationRepository = LocationRepository()
 
     fun getForecasts(latitude: Double, longitude: Double) {
         viewModelScope.launch {
@@ -42,6 +50,17 @@ class MainViewModel: ViewModel() {
                     it.add(dayForecast)
                 }
             }
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    fun getUserLocation(fusedLocationProviderClient: FusedLocationProviderClient) {
+        viewModelScope.launch {
+            locationRepository
+                .getUserLocation(fusedLocationProviderClient)
+                .collect {
+                    _location.value = it
+                }
         }
     }
 

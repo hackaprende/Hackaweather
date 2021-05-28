@@ -80,12 +80,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     binding.emptyView.text = getString(it.message)
                     binding.emptyView.visibility = View.VISIBLE
                 }
-                ApiResponseStatus.OnLoading -> {
+                is ApiResponseStatus.OnLoading -> {
                     binding.loadingWheel.visibility = View.VISIBLE
                     binding.emptyView.text = getString(R.string.no_items_found)
                     binding.emptyView.visibility = View.GONE
                 }
-                ApiResponseStatus.OnSuccess -> {
+                is ApiResponseStatus.OnSuccess -> {
                     binding.loadingWheel.visibility = View.GONE
                     binding.emptyView.text = getString(R.string.no_items_found)
                     binding.emptyView.visibility = View.GONE

@@ -3,7 +3,6 @@ package com.hackaprende.hackaweather.main
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
-import android.location.Address
 import android.location.Location
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +16,12 @@ import com.google.android.gms.location.LocationServices
 import com.hackaprende.hackaweather.databinding.ActivityMainBinding
 import kotlinx.coroutines.flow.collect
 import android.location.Geocoder
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.hackaprende.hackaweather.R
 import com.hackaprende.hackaweather.api.ApiResponseStatus
 import java.util.*
@@ -24,11 +29,13 @@ import java.util.*
 
 private const val LOCATION_PERMISSION_REQUEST_CODE = 1000
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private val mainViewModel: MainViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
+    private lateinit var mMap: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var currentLocation: Location
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,21 +106,60 @@ class MainActivity : AppCompatActivity() {
             .addOnSuccessListener { location: Location? ->
                 if (location == null) {
                     // This is a temporal mock latitude due to problems with the GPS emulator
-                        // it should not be in production
-                    getForecasts(19.34,-99.15)
+                    // it should not be in production
+                    currentLocation = Location("")
+                    currentLocation.latitude = 19.34
+                    currentLocation.longitude = -99.15
                 } else {
-                    getForecasts(location.latitude, location.longitude)
+                    currentLocation = location
                 }
+
+                getForecasts(currentLocation.latitude, currentLocation.longitude)
+
+                loadMap()
             }
     }
 
+    private fun loadMap() {
+        val mapFragment = supportFragmentManager
+            .findFragmentById(R.id.map) as SupportMapFragment
+        mapFragment.getMapAsync(this)
+    }
+
     private fun getForecasts(latitude: Double, longitude: Double) {
-        val gcd = Geocoder(this, Locale.getDefault())
-        val addresses: List<Address> = gcd.getFromLocation(latitude, longitude, 1)
-        if (addresses.isNotEmpty()) {
-            binding.cityName.text = addresses[0].locality
-        }
+        binding.cityName.text = getCityNameByCoordinates(latitude, longitude)
 
         mainViewModel.getForecasts(latitude, longitude)
+    }
+
+    private fun getCityNameByCoordinates(latitude: Double, longitude: Double): String {
+        val geocoder = Geocoder(this, Locale.getDefault())
+        val addresses = geocoder.getFromLocation(latitude, longitude, 1)
+
+        return (if (addresses.isNullOrEmpty()) {
+            "Not in a city"
+        } else {
+            addresses[0].locality
+        }) ?: "Not in a city"
+    }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        mMap = googleMap
+        mMap.setOnMapClickListener {
+            mMap.clear()
+            addMarkerWithLatLng(it)
+            getForecasts(it.latitude, it.longitude)
+        }
+
+        val currentLatLng = LatLng(currentLocation.latitude, currentLocation.longitude)
+        addMarkerWithLatLng(currentLatLng)
+    }
+
+    private fun addMarkerWithLatLng(latLng: LatLng) {
+        mMap.addMarker(
+            MarkerOptions()
+                .position(latLng)
+                .title("Marker in ${getCityNameByCoordinates(latLng.latitude, latLng.longitude)}"))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 5.0f))
     }
 }

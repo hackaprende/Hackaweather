@@ -16,8 +16,8 @@ import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 
 class MainViewModel: ViewModel() {
-    private var _forecasts = MutableStateFlow<List<DayForecast>>(mutableListOf())
-    val forecasts: StateFlow<List<DayForecast>> = _forecasts
+    private var _forecasts = MutableStateFlow<MutableList<DayForecast>>(mutableListOf())
+    val forecasts: StateFlow<MutableList<DayForecast>> = _forecasts
 
     private var _responseStatus = MutableLiveData<ApiResponseStatus>()
     val responseStatus: LiveData<ApiResponseStatus>
@@ -47,9 +47,7 @@ class MainViewModel: ViewModel() {
 
     private fun clearList() {
         if (_forecasts.value.isNotEmpty()) {
-            _forecasts.value.toMutableList().also {
-                it.clear()
-            }
+            _forecasts.value = mutableListOf()
         }
     }
 }

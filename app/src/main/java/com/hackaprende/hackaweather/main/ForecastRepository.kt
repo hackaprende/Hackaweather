@@ -1,6 +1,7 @@
 package com.hackaprende.hackaweather.main
 
-import com.hackaprende.hackaweather.api.ForecastRemoteDataSource
+import com.hackaprende.hackaweather.api.RemoteDataSource
+import com.hackaprende.hackaweather.common.Constants.NUMBER_OF_DAYS_TO_DOWNLOAD
 import com.hackaprende.hackaweather.common.DayForecast
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -9,7 +10,7 @@ import javax.inject.Inject
 
 private const val SECONDS_IN_ONE_DAY = 60 * 60 * 24
 
-class ForecastRepository @Inject constructor(private val forecastRemoteDataSource: ForecastRemoteDataSource) :
+class ForecastRepository @Inject constructor(private val forecastRemoteDataSource: RemoteDataSource) :
     ForecastTasks {
 
     override fun getDayForecasts(latitude: Double, longitude: Double): Flow<DayForecast> = flow {
@@ -19,7 +20,7 @@ class ForecastRepository @Inject constructor(private val forecastRemoteDataSourc
         calendar.set(Calendar.MINUTE, 0)
         calendar.set(Calendar.SECOND, 0)
         val currentTimestamp = calendar.time.time / 1000
-        while(count < 6) {
+        while(count < NUMBER_OF_DAYS_TO_DOWNLOAD) {
             val timestampToDownload = currentTimestamp - (count * SECONDS_IN_ONE_DAY)
             val dayForecast = forecastRemoteDataSource.getDayForecast(
                 latitude, longitude,

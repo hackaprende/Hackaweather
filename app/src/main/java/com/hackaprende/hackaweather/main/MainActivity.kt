@@ -73,22 +73,25 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
 
-        mainViewModel.responseStatus.observe(this) {
-            when (it) {
-                is ApiResponseStatus.OnError -> {
-                    binding.loadingWheel.visibility = View.GONE
-                    binding.emptyView.text = getString(it.message)
-                    binding.emptyView.visibility = View.VISIBLE
-                }
-                is ApiResponseStatus.OnLoading -> {
-                    binding.loadingWheel.visibility = View.VISIBLE
-                    binding.emptyView.text = getString(R.string.no_items_found)
-                    binding.emptyView.visibility = View.GONE
-                }
-                is ApiResponseStatus.OnSuccess -> {
-                    binding.loadingWheel.visibility = View.GONE
-                    binding.emptyView.text = getString(R.string.no_items_found)
-                    binding.emptyView.visibility = View.GONE
+        lifecycleScope.launchWhenStarted {
+            mainViewModel.responseStatus.collect {
+                when (it) {
+                    is ApiResponseStatus.OnError -> {
+                        binding.loadingWheel.visibility = View.GONE
+                        binding.emptyView.text = getString(it.message)
+                        binding.emptyView.visibility = View.VISIBLE
+                    }
+                    is ApiResponseStatus.OnLoading -> {
+                        binding.loadingWheel.visibility = View.VISIBLE
+                        binding.emptyView.text = getString(R.string.no_items_found)
+                        binding.emptyView.visibility = View.GONE
+                    }
+                    is ApiResponseStatus.OnSuccess -> {
+                        binding.loadingWheel.visibility = View.GONE
+                        binding.emptyView.text = getString(R.string.no_items_found)
+                        binding.emptyView.visibility = View.GONE
+                    }
+                    is ApiResponseStatus.None -> { /** Do nothing **/ }
                 }
             }
         }

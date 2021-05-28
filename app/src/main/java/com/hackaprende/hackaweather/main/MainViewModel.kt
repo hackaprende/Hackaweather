@@ -1,15 +1,12 @@
 package com.hackaprende.hackaweather.main
 
 import android.location.Location
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.hackaprende.hackaweather.R
 import com.hackaprende.hackaweather.api.ApiResponseStatus
 import com.hackaprende.hackaweather.common.DayForecast
-import com.hackaprende.hackaweather.location.LocationRepository
 import com.hackaprende.hackaweather.location.LocationTasks
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -33,8 +30,8 @@ class MainViewModel @Inject constructor(
     private var _location = MutableStateFlow<Location?>(null)
     val location: StateFlow<Location?> = _location
 
-    private var _responseStatus = MutableLiveData<ApiResponseStatus>()
-    val responseStatus: LiveData<ApiResponseStatus>
+    private var _responseStatus = MutableStateFlow<ApiResponseStatus>(ApiResponseStatus.None)
+    val responseStatus: StateFlow<ApiResponseStatus>
         get() = _responseStatus
 
     fun getForecasts(latitude: Double, longitude: Double) {
@@ -49,11 +46,11 @@ class MainViewModel @Inject constructor(
                     }
                 }
                 .collect { dayForecast ->
-                _forecasts.value = _forecasts.value.toMutableList().also {
-                    _responseStatus.value = ApiResponseStatus.OnSuccess
-                    it.add(dayForecast)
+                    _forecasts.value = _forecasts.value.toMutableList().also {
+                        _responseStatus.value = ApiResponseStatus.OnSuccess
+                       it.add(dayForecast)
+                    }
                 }
-            }
         }
     }
 

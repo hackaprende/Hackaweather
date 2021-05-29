@@ -1,5 +1,6 @@
 package com.hackaprende.hackaweather.main
 
+import com.hackaprende.hackaweather.BuildConfig
 import com.hackaprende.hackaweather.api.RemoteDataSource
 import com.hackaprende.hackaweather.common.Constants.NUMBER_OF_DAYS_TO_DOWNLOAD
 import com.hackaprende.hackaweather.common.DayForecast
@@ -24,7 +25,7 @@ class ForecastRepository @Inject constructor(private val forecastRemoteDataSourc
             val timestampToDownload = currentTimestamp - (count * SECONDS_IN_ONE_DAY)
             val dayForecast = forecastRemoteDataSource.getDayForecast(
                 latitude, longitude,
-                timestampToDownload, "5dd487edb1886dda6965a9c828736c8b"
+                timestampToDownload, BuildConfig.WEATHER_API_KEY
             )
             dayForecast.setCurrentDayByTimestamp(timestampToDownload)
 

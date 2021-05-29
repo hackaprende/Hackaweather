@@ -16,6 +16,8 @@ import com.google.android.gms.location.LocationServices
 import com.hackaprende.hackaweather.databinding.ActivityMainBinding
 import kotlinx.coroutines.flow.collect
 import android.location.Geocoder
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -112,6 +114,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         requestUserLocation()
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -121,8 +124,26 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE && grantResults[0] == 1) {
             requestUserLocation()
+        } else {
+            shouldRequestLocationPermission()
         }
     }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun shouldRequestLocationPermission() {
+        if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle(R.string.location_permission_dialog_title)
+            builder.setMessage(R.string.location_permission_dialog_message)
+            builder.setPositiveButton(android.R.string.ok) { _, _ ->
+                requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+                    LOCATION_PERMISSION_REQUEST_CODE)
+            }
+
+            return builder.create().show()
+        }
+    }
+
 
     @SuppressLint("MissingPermission")
     private fun requestUserLocation() = mainViewModel.getUserLocation(fusedLocationClient)
